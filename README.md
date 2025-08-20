@@ -1,14 +1,21 @@
--- Selected Email Score
-IF DATETIME([All Dates]) = {MIN(DATETIME([All Dates]))} THEN (CASE [Email Score Selection] WHEN "1" THEN [email_score1] WHEN "2" THEN [email_score2] END) + {SUM([Net_Change])} - [Net_Change] END
+-- Selected Email Score Total
+IF DATETIME([All Dates]) = ISNULL({MIN(DATETIME([All Dates]))}) THEN
+    -- No dates selected, use latest date
+    IF DATETIME([All Dates]) = {MAX(DATETIME([All Dates]))} THEN
+        IF [Email Score Selection] = "1" THEN [email_score1] ELSE [email_score2] END
+    END
+ELSE
+    -- Dates selected, use first date value only
+    IF DATETIME([All Dates]) = {MIN(DATETIME([All Dates]))} THEN
+        IF [Email Score Selection] = "1" THEN [email_score1] ELSE [email_score2] END
+    END
+END
 
--- Net Change  
-IF DATETIME([All Dates]) = {MIN(DATETIME([All Dates]))} THEN {SUM([Net_Change])} END
-
--- Additions
-IF DATETIME([All Dates]) = {MIN(DATETIME([All Dates]))} THEN {SUM([Addition])} END
-
--- Exits
-IF DATETIME([All Dates]) = {MIN(DATETIME([All Dates]))} THEN {SUM([Exits])} END
-
--- Email Members
-IF DATETIME([All Dates]) = {MIN(DATETIME([All Dates]))} THEN COUNTD([Email_Members]) END
+-- Net Change Total (sum of selected range)
+IF DATETIME([All Dates]) = ISNULL({MIN(DATETIME([All Dates]))}) THEN
+    -- No dates selected
+    IF DATETIME([All Dates]) = {MAX(DATETIME([All Dates]))} THEN {SUM([Net_Change])} END
+ELSE
+    -- Dates selected
+    IF DATETIME([All Dates]) = {MIN(DATETIME([All Dates]))} THEN {SUM([Net_Change])} END
+END
